@@ -1,1 +1,9 @@
 src/target
+src/.classpath
+src/.project
+src/.settings
+.metadata
+.recommenders
+*.iml
+*.ipr
+*.iws
