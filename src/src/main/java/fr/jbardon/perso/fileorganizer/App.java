@@ -23,15 +23,19 @@ public class App
 public static void main(String[] args) throws FileNotFoundException,
       IOException, org.xml.sax.SAXException, InvalidTypeException {
  
-	System.out.println(getProperty("user.dir"));
+	//System.out.println(getProperty("user.dir"));
 
     DirectoryRecursiveExplorer explorer = new DirectoryRecursiveExplorer(
         Paths.get("../sample/organized")
     );
 
     Set<File> files = explorer.getFilesInDirectory();
-    FileDateMap fileOrganizer = new FileDateMap(files);
+    FileDateMap fileOrganizer = new FileDateMap(files, 6);
     fileOrganizer.calulateFolders();
+
+    System.out.println("File organizer configuration");
+    System.out.println("- Max files in folders: " + fileOrganizer.getMaxElementsPerDate());
+    System.out.println("- Tolerence: " + fileOrganizer.getElementsPerDateTolerence());
 
     List<LinkedHashSet<File>> calculatedFolders = fileOrganizer.getCalculatedFolders();
     FolderAction actionOnFolder = new FolderActionPrint();

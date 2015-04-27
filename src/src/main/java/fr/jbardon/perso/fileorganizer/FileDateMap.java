@@ -105,6 +105,15 @@ public class FileDateMap {
         }
     }
 
+    // Getters
+    public int getMaxElementsPerDate() {
+        return maxElementsPerDate;
+    }
+
+    public int getElementsPerDateTolerence() {
+        return elementsPerDateTolerence;
+    }
+
     // Setters
     public void setDefaultMaxElementsPerDate(){
         this.setMaxElementPerDate(FileDateMap.DEFAULT_MAX_ELEMENTS_PER_DATE);
