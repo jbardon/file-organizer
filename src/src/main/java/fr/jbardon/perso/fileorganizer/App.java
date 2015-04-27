@@ -1,6 +1,8 @@
 package fr.jbardon.perso.fileorganizer;
 
 import com.sun.jdi.InvalidTypeException;
+import fr.jbardon.perso.fileorganizer.folderaction.FolderAction;
+import fr.jbardon.perso.fileorganizer.folderaction.FolderActionPrint;
 
 import static java.lang.System.getProperty;
 
@@ -11,6 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 public class App 
@@ -25,13 +30,18 @@ public static void main(String[] args) throws FileNotFoundException,
     );
 
     Set<File> files = explorer.getFilesInDirectory();
-    for(File currentFile : files){
-        System.out.println(currentFile.getAbsolutePath());
+    FileDateMap fileOrganizer = new FileDateMap(files);
+    fileOrganizer.calulateFolders();
+
+    List<LinkedHashSet<File>> calculatedFolders = fileOrganizer.getCalculatedFolders();
+    FolderAction actionOnFolder = new FolderActionPrint();
+
+    for(LinkedHashSet<File> folder : calculatedFolders){
+        actionOnFolder.onFolderCreation(folder);
     }
 
     /*
     Path file = Paths.get("../sample/organized/2015/03/31-03-2015-1.txt");
-    
     BasicFileAttributes attr = Files.readAttributes(file, BasicFileAttributes.class);
 
     System.out.println("creationTime: " + attr.creationTime());
