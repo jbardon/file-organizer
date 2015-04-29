@@ -1,4 +1,4 @@
-package fr.jbardon.perso.fileorganizer;
+package fr.jbardon.perso.fileorganizer.model;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package fr.jbardon.perso.fileorganizer.folderaction;
+package fr.jbardon.perso.fileorganizer.model.folderaction;
 
 import java.io.File;
 import java.util.Date;

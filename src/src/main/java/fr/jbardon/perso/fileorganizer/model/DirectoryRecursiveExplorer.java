@@ -1,4 +1,4 @@
-package fr.jbardon.perso.fileorganizer;
+package fr.jbardon.perso.fileorganizer.model;
 
 import com.sun.jdi.InvalidTypeException;
 
