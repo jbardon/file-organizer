@@ -69,9 +69,7 @@ public class Controller implements ActionListener {
                 break;
 
             case PreviewDialog.BUTTON_APPLY_TEXT:
-
-
-
+                this.model.applyFolderOrganization();
                 break;
         }
     }

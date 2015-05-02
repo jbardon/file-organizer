@@ -57,11 +57,15 @@ public class Model extends Observable {
     }
 
     public void applyFolderOrganization(){
-        FolderActionHardDrive actionOnFolder = new FolderActionHardDrive();
+        FolderActionHardDrive actionOnFolder = new FolderActionHardDrive(
+            this.outputDirectory
+        );
 
         for(LinkedHashSet<File> folder : this.calculatedFolders){
             actionOnFolder.onFolderCreation(folder);
         }
+
+        System.out.println("End of copy");
     }
 
     public DefaultMutableTreeNode getDisplayTree(){
