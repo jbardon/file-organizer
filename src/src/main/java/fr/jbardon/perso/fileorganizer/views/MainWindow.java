@@ -1,27 +1,39 @@
 package fr.jbardon.perso.fileorganizer.views;
 
 import fr.jbardon.perso.fileorganizer.controller.Controller;
+import fr.jbardon.perso.fileorganizer.model.Model;
 import fr.jbardon.perso.fileorganizer.views.dialogs.PreviewDialog;
+import sun.applet.Main;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by jeremy on 28/04/15.
  */
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements Observer {
 
     public final static String NO_DIRECTORY_SELECTED = "No directory selected...";
     public final static String PREVIEW_BUTTON_TEXT = "Preview..";
     public final static String BROWSE_BUTTON_TEXT = "Browse..";
 
-    private JTextField textSelectedFolder;
+    public final static String BROWSE_INDIR_TOOLTIP = "Input directory";
+    public final static String BROWSE_OUTDIR_TOOLTIP = "Output directory";
+
+    private Controller controller;
+
+    private JTextField textInputFolder;
+    private JTextField textOutputFolder;
+
     private JSpinner spinnerMaxFiles;
     private JSpinner spinnerTolerence;
 
     public MainWindow(Controller controller){
 
         super("File organizer");
+        this.controller = controller;
 
         // Interface
         JPanel panelRoot = new JPanel();
@@ -34,15 +46,38 @@ public class MainWindow extends JFrame {
         panelFolder.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         panelFolder.setLayout(new BorderLayout());
 
-        this.textSelectedFolder = new JTextField(MainWindow.NO_DIRECTORY_SELECTED);
-        this.textSelectedFolder.setEditable(false);
+        // > IN
+        JPanel panelInputFolder = new JPanel();
+        panelInputFolder.setLayout(new BorderLayout());
 
-        JButton buttonBrowseFolder = new JButton(MainWindow.BROWSE_BUTTON_TEXT);
-        buttonBrowseFolder.addActionListener(controller);
+        this.textInputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*/"../sample/organized");
+        this.textInputFolder.setEditable(false);
 
-        panelFolder.add(new JLabel("Directory: "), BorderLayout.WEST);
-        panelFolder.add(this.textSelectedFolder, BorderLayout.CENTER);
-        panelFolder.add(buttonBrowseFolder, BorderLayout.EAST);
+        JButton buttonBrowseInFolder = new JButton(MainWindow.BROWSE_BUTTON_TEXT);
+        buttonBrowseInFolder.setToolTipText(MainWindow.BROWSE_INDIR_TOOLTIP);
+        buttonBrowseInFolder.addActionListener(controller);
+
+        panelInputFolder.add(new JLabel("Input:  "), BorderLayout.WEST);
+        panelInputFolder.add(this.textInputFolder, BorderLayout.CENTER);
+        panelInputFolder.add(buttonBrowseInFolder, BorderLayout.EAST);
+
+        // > OUT
+        JPanel panelOutputFolder = new JPanel();
+        panelOutputFolder.setLayout(new BorderLayout());
+
+        this.textOutputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*/"../sample/result");
+        this.textOutputFolder.setEditable(false);
+
+        JButton buttonBrowseOutFolder = new JButton(MainWindow.BROWSE_BUTTON_TEXT);
+        buttonBrowseOutFolder.setToolTipText(MainWindow.BROWSE_OUTDIR_TOOLTIP);
+        buttonBrowseOutFolder.addActionListener(controller);
+
+        panelOutputFolder.add(new JLabel("Output: "), BorderLayout.WEST);
+        panelOutputFolder.add(this.textOutputFolder, BorderLayout.CENTER);
+        panelOutputFolder.add(buttonBrowseOutFolder, BorderLayout.EAST);        
+
+        panelFolder.add(panelInputFolder, BorderLayout.NORTH);
+        panelFolder.add(panelOutputFolder, BorderLayout.SOUTH);
 
         // Spinners
         JPanel panelOptions = new JPanel();
@@ -79,7 +114,7 @@ public class MainWindow extends JFrame {
         panelRoot.add(panelOptions, BorderLayout.CENTER);
         panelRoot.add(panelButtons, BorderLayout.SOUTH);
 
-        this.setPreferredSize(new Dimension(400, 200));
+        this.setPreferredSize(new Dimension(400, 225));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
@@ -88,12 +123,27 @@ public class MainWindow extends JFrame {
         this.setVisible(true);
     }
 
-    public void showPreviewDialog(){
-        PreviewDialog dialog = new PreviewDialog(this);
-        dialog.display();
+    public void updateInputDirPath(String path){
+        this.textInputFolder.setText(path);
     }
 
-    public void updateDirectoryPath(String path){
-        this.textSelectedFolder.setText(path);
+    public void updateOutputDirPath(String path){
+        this.textOutputFolder.setText(path);
+    }
+
+    public String getInputDirPath(){
+        return this.textInputFolder.getText();
+    }
+
+    public String getOutputDirPath(){
+        return this.textOutputFolder.getText();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        Model model = (Model) o;
+
+        PreviewDialog dialog = new PreviewDialog(this, controller, model.getDisplayTree());
+        dialog.display();
     }
 }

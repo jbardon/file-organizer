@@ -47,6 +47,7 @@ public class FileDateMap {
 
         this.storeFileByDate();
         this.mergeFilesInFolders();
+        this.makeFolderOrganization();
     }
 
     /**
@@ -84,8 +85,10 @@ public class FileDateMap {
             LinkedHashSet<File> nextFiles = (LinkedHashSet<File>) nextDate.getValue();
             LinkedHashSet<File> currentFiles = (LinkedHashSet<File>) currentDate.getValue();
 
-            if(currentFiles.size() < this.maxElementsPerDate + this.elementsPerDateTolerence){
-                if(currentFiles.size() + nextFiles.size() <= this.maxElementsPerDate + this.elementsPerDateTolerence){
+            // TODO Add condition when the year is different
+            // TODO Add tolerence usage
+            if (currentFiles.size() < this.maxElementsPerDate + this.elementsPerDateTolerence) {
+                if (currentFiles.size() + nextFiles.size() <= this.maxElementsPerDate + this.elementsPerDateTolerence) {
                     currentFiles.addAll(nextFiles);
                     contentIterator.remove();
 
@@ -97,6 +100,19 @@ public class FileDateMap {
             }
 
             currentDate = nextDate;
+        }
+    }
+
+    /**
+     * Turn list of folders into structured folder list
+     * with years and months
+     */
+    private void makeFolderOrganization() {
+        Iterator contentIterator = this.content.entrySet().iterator();
+
+        while (contentIterator.hasNext()){
+            Map.Entry currentDate = (Map.Entry) contentIterator.next();
+
         }
     }
 
