@@ -94,7 +94,6 @@ public class FileDateMap {
                 continue; // exit: following algorithm need to know the next element
             }
 
-            // TODO Add condition when the year is different
             if (currentFiles.size() < this.maxElementsPerDate) {
 
                 // Get previous files
@@ -112,6 +111,21 @@ public class FileDateMap {
 
                 // Reset iterator on currentDate
                 contentIterator.previous();
+
+                // No merge if the files are not in the same year
+                long currentLastModified = currentFiles.iterator().next().lastModified();
+                long nextLastModified = nextFiles.iterator().next().lastModified();
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(currentLastModified);
+
+                int currentYear = calendar.get(Calendar.YEAR);
+                calendar.setTimeInMillis(nextLastModified);
+                int nextYear = calendar.get(Calendar.YEAR);
+
+                if(currentYear != nextYear){
+                    continue;
+                }
 
                 // Merge current and next directories if they don't have
                 // more than max element (added)
