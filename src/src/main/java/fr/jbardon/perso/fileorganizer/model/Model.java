@@ -19,15 +19,23 @@ public class Model extends Observable {
     private List<LinkedHashSet<File>> calculatedFolders;
     private DefaultMutableTreeNode displayTree;
 
+    // DirectoryRecursiveExplorer parameters
     private String inputDirectory;
     private String outputDirectory;
 
-    public Model(String inputDir, String outputDir){
+    private int maxFiles;
+    private int tolerance;
+
+    public Model(String inputDir, String outputDir, int maxFiles, int tolerance){
+
         this.displayTree = new DefaultMutableTreeNode("No nodes");
         this.calculatedFolders = new ArrayList<LinkedHashSet<File>>();
 
         this.inputDirectory = inputDir;
         this.outputDirectory = outputDir;
+
+        this.maxFiles = maxFiles;
+        this.tolerance = tolerance;
     }
 
     public void computeFolderOrganization() throws InvalidTypeException {
@@ -36,7 +44,7 @@ public class Model extends Observable {
         );
 
         Set<File> files = explorer.getFilesInDirectory();
-        FileDateMap fileOrganizer = new FileDateMap(files, 6);
+        FileDateMap fileOrganizer = new FileDateMap(files, this.maxFiles, this.tolerance);
         fileOrganizer.calulateFolders();
 
         System.out.println("File organizer configuration");

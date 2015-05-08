@@ -46,8 +46,8 @@ public class FileDateMap {
         this.content.clear();
 
         this.storeFileByDate();
-        this.mergeFilesInFolders();
-        this.makeFolderOrganization();
+        LinkedList<LinkedHashSet<File>> directories = this.mergeFilesInFolders();
+        this.makeFolderOrganization(directories);
     }
 
     /**
@@ -75,39 +75,76 @@ public class FileDateMap {
      * Set files in sub-folders by taking into
      * account max element per date and tolerence
      */
-    private void mergeFilesInFolders(){
-        Iterator contentIterator = this.content.entrySet().iterator();
-        Map.Entry currentDate = (Map.Entry) contentIterator.next();
+    private LinkedList<LinkedHashSet<File>> mergeFilesInFolders(){
+
+        // The algorithm need to know 3 following items but the
+        // iterator only allows to remove the last so switch to a list..
+        Collection<LinkedHashSet<File>> contentCollection =  this.content.values();
+
+        LinkedList<LinkedHashSet<File>> contentList = new LinkedList<LinkedHashSet<File>>();
+        contentList.addAll(contentCollection);
+
+        // Algorithm
+        ListIterator contentIterator = contentList.listIterator();
 
         while (contentIterator.hasNext()){
 
-            Map.Entry nextDate = (Map.Entry) contentIterator.next();
-            LinkedHashSet<File> nextFiles = (LinkedHashSet<File>) nextDate.getValue();
-            LinkedHashSet<File> currentFiles = (LinkedHashSet<File>) currentDate.getValue();
+            LinkedHashSet<File> currentFiles = (LinkedHashSet<File>) contentIterator.next();
+            if(!contentIterator.hasNext()){
+                continue; // exit: following algorithm need to know the next element
+            }
 
             // TODO Add condition when the year is different
-            // TODO Add tolerence usage
-            if (currentFiles.size() < this.maxElementsPerDate + this.elementsPerDateTolerence) {
-                if (currentFiles.size() + nextFiles.size() <= this.maxElementsPerDate + this.elementsPerDateTolerence) {
+            if (currentFiles.size() < this.maxElementsPerDate) {
+
+                // Get previous files
+                LinkedHashSet<File> previousFiles = null;
+                contentIterator.previous();
+
+                if(contentIterator.hasPrevious()){
+                    previousFiles = (LinkedHashSet<File>) contentIterator.previous();
+                    contentIterator.next();
+                }
+
+                // Get next files
+                contentIterator.next();
+                LinkedHashSet<File> nextFiles = (LinkedHashSet<File>) contentIterator.next();
+
+                // Reset iterator on currentDate
+                contentIterator.previous();
+
+                // Merge current and next directories if they don't have
+                // more than max element (added)
+                if (currentFiles.size() + nextFiles.size() <= this.maxElementsPerDate) {
                     currentFiles.addAll(nextFiles);
+                    contentIterator.next();
                     contentIterator.remove();
 
                     // Next file can may be also added in
                     // the current folder if the maximum has
                     // not been reached
-                    continue;
+                    contentIterator.previous();
+                }
+                // Tolerence: merge two directories if the next is bigger than
+                // the maximum and new size for the two is not bigger than max + tolerence
+                else if(previousFiles != null && nextFiles.size() > this.maxElementsPerDate){
+                    if(previousFiles.size() + currentFiles.size() <= this.maxElementsPerDate + this.elementsPerDateTolerence){
+                        previousFiles.addAll(currentFiles);
+                        contentIterator.previous();
+                        contentIterator.remove();
+                    }
                 }
             }
-
-            currentDate = nextDate;
         }
+
+        return contentList;
     }
 
     /**
      * Turn list of folders into structured folder list
      * with years and months
      */
-    private void makeFolderOrganization() {
+    private void makeFolderOrganization(LinkedList<LinkedHashSet<File>> directories) {
         Iterator contentIterator = this.content.entrySet().iterator();
 
         while (contentIterator.hasNext()){

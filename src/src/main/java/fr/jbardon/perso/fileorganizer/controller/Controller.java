@@ -55,7 +55,9 @@ public class Controller implements ActionListener {
 
                 this.model = new Model(
                     this.window.getInputDirPath(),
-                    this.window.getOutputDirPath()
+                    this.window.getOutputDirPath(),
+                    this.window.getMaxFiles(),
+                    this.window.getTolerance()
                 );
 
                 this.model.addObserver(this.window);

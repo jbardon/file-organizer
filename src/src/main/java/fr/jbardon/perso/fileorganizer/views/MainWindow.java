@@ -139,6 +139,14 @@ public class MainWindow extends JFrame implements Observer {
         return this.textOutputFolder.getText();
     }
 
+    public int getMaxFiles(){
+        return (int)this.spinnerMaxFiles.getValue();
+    }
+
+    public int getTolerance(){
+        return (int)this.spinnerTolerence.getValue();
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         Model model = (Model) o;
