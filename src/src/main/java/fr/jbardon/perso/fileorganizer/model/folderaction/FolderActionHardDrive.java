@@ -19,7 +19,7 @@ public class FolderActionHardDrive implements FolderAction {
     }
 
     @Override
-    public void onFolderCreation(LinkedHashSet<File> files) {
+    public void onFolderCreation(String dirName, LinkedHashSet<File> files) {
 
         // Create folder for theses files
         File currentDirectory = new File(

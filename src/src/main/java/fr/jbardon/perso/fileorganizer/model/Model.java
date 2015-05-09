@@ -16,7 +16,7 @@ import java.nio.file.Paths;
  */
 public class Model extends Observable {
 
-    private List<LinkedHashSet<File>> calculatedFolders;
+    private LinkedHashMap<String,LinkedHashSet<File>> calculatedFolders;
     private DefaultMutableTreeNode displayTree;
 
     // DirectoryRecursiveExplorer parameters
@@ -29,7 +29,7 @@ public class Model extends Observable {
     public Model(String inputDir, String outputDir, int maxFiles, int tolerance){
 
         this.displayTree = new DefaultMutableTreeNode("No nodes");
-        this.calculatedFolders = new ArrayList<LinkedHashSet<File>>();
+        this.calculatedFolders = new LinkedHashMap<String,LinkedHashSet<File>>();
 
         this.inputDirectory = inputDir;
         this.outputDirectory = outputDir;
@@ -45,17 +45,16 @@ public class Model extends Observable {
 
         Set<File> files = explorer.getFilesInDirectory();
         FileDateMap fileOrganizer = new FileDateMap(files, this.maxFiles, this.tolerance);
-        fileOrganizer.calulateFolders();
+        this.calculatedFolders = fileOrganizer.calculateFolders();
 
         System.out.println("File organizer configuration");
         System.out.println("- Max files in folders: " + fileOrganizer.getMaxElementsPerDate());
         System.out.println("- Tolerence: " + fileOrganizer.getElementsPerDateTolerence());
 
-        this.calculatedFolders = fileOrganizer.getCalculatedFolders();
         FolderActionTree actionOnFolder = new FolderActionTree();
 
-        for(LinkedHashSet<File> folder : this.calculatedFolders){
-            actionOnFolder.onFolderCreation(folder);
+        for(Map.Entry<String, LinkedHashSet<File>> entry : this.calculatedFolders.entrySet()){
+            actionOnFolder.onFolderCreation(entry.getKey(), entry.getValue());
         }
 
         this.displayTree = actionOnFolder.getTreeNode();
@@ -69,8 +68,8 @@ public class Model extends Observable {
             this.outputDirectory
         );
 
-        for(LinkedHashSet<File> folder : this.calculatedFolders){
-            actionOnFolder.onFolderCreation(folder);
+        for(Map.Entry<String, LinkedHashSet<File>> entry : this.calculatedFolders.entrySet()){
+            actionOnFolder.onFolderCreation(entry.getKey(), entry.getValue());
         }
 
         System.out.println("End of copy");
