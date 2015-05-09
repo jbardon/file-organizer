@@ -1,7 +1,7 @@
-src/target
-src/.classpath
-src/.project
-src/.settings
+target
+.classpath
+.project
+.settings
 .metadata
 .recommenders
 *.iml
