@@ -52,7 +52,7 @@ public class MainWindow extends JFrame implements Observer {
         JPanel panelInputFolder = new JPanel();
         panelInputFolder.setLayout(new BorderLayout());
 
-        this.textInputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*//*"../sample/organized"*/"/Volumes/Data/Photos");
+        this.textInputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*/"../sample/organized"/*"/Volumes/Data/Photos"*/);
         this.textInputFolder.setEditable(false);
 
         JButton buttonBrowseInFolder = new JButton(MainWindow.BROWSE_BUTTON_TEXT);
@@ -67,7 +67,7 @@ public class MainWindow extends JFrame implements Observer {
         JPanel panelOutputFolder = new JPanel();
         panelOutputFolder.setLayout(new BorderLayout());
 
-        this.textOutputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*//*"../sample/result"*/"/Volumes/Data/temp");
+        this.textOutputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*/"../sample/result"/*"/Volumes/Data/temp"*/);
         this.textOutputFolder.setEditable(false);
 
         JButton buttonBrowseOutFolder = new JButton(MainWindow.BROWSE_BUTTON_TEXT);

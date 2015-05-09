@@ -167,8 +167,8 @@ public class FileDateMap {
                     contentIterator.previous();
                 }
 
-                // Tolerence: merge two directories if the next is bigger than
-                // the maximum and new size for the two is not bigger than max + tolerence
+                // Tolerence: merge two directories if the next is not bigger than
+                // the maximum and the new size for the two is not bigger than max + tolerence
                 else if(previousFiles != null && nextFiles.size() > this.maxElementsPerDate){
                     if(previousFiles.size() + currentFiles.size() <= this.maxElementsPerDate + this.elementsPerDateTolerence){
                         previousFiles.addAll(currentFiles);
