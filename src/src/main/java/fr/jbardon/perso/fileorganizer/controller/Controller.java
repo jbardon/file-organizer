@@ -3,12 +3,14 @@ package fr.jbardon.perso.fileorganizer.controller;
 import com.sun.jdi.InvalidTypeException;
 import fr.jbardon.perso.fileorganizer.model.Model;
 import fr.jbardon.perso.fileorganizer.views.MainWindow;
+import fr.jbardon.perso.fileorganizer.views.ProgressTask;
 import fr.jbardon.perso.fileorganizer.views.dialogs.PreviewDialog;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Observer;
 
 /**
  * Created by jeremy on 29/04/15.
@@ -20,6 +22,10 @@ public class Controller implements ActionListener {
 
     public void setGui(MainWindow window){
         this.window = window;
+    }
+
+    public void addModelObserver(Observer observer){
+        this.model.addObserver(observer);
     }
 
     @Override
@@ -71,7 +77,15 @@ public class Controller implements ActionListener {
                 break;
 
             case PreviewDialog.BUTTON_APPLY_TEXT:
+
+                ProgressTask progressDisplay = new ProgressTask();
+                progressDisplay.addPropertyChangeListener(this.window.getPreviewDialog());
+
+                this.model.addObserver(progressDisplay);
+                progressDisplay.execute();
+
                 this.model.applyFolderOrganization();
+
                 break;
         }
     }

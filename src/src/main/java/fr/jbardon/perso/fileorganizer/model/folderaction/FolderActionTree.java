@@ -41,7 +41,7 @@ public class FolderActionTree implements FolderAction {
             this.previousNodes.push(yearNode);
 
             DefaultMutableTreeNode monthNode = new DefaultMutableTreeNode(
-                this.monthNames[Integer.parseInt(date.get(1)) - 1]
+                this.translateMonthName(date.get(1))
             );
             this.previousNodes.push(monthNode);
 
@@ -63,18 +63,18 @@ public class FolderActionTree implements FolderAction {
             this.treeNode.add(newYearNode);
 
             monthNode = new DefaultMutableTreeNode(
-                this.monthNames[Integer.parseInt(date.get(1)) - 1]
+                this.translateMonthName(date.get(1))
             );
             newYearNode.add(monthNode);
 
             yearNode = newYearNode;
         }
         else {
-            String currentMonth = this.monthNames[Integer.parseInt(date.get(1)) - 1];
+            String currentMonth = this.translateMonthName(date.get(1));
             if (!currentMonth.equals(previousMonth)) {
 
                 monthNode = new DefaultMutableTreeNode(
-                    this.monthNames[Integer.parseInt(date.get(1)) - 1]
+                    this.translateMonthName(date.get(1))
                 );
 
                 yearNode.add(monthNode);
@@ -101,6 +101,20 @@ public class FolderActionTree implements FolderAction {
         }
 
         this.previousNodes.push(monthNode);
+    }
+
+    private String translateMonthName(String month){
+
+        String[] months = month.split("-");
+        StringBuilder finalName = new StringBuilder("");
+
+        for(String currentMonth : months){
+            finalName.append(this.monthNames[Integer.parseInt(currentMonth) - 1]);
+            finalName.append("-");
+        }
+
+        String returnString = finalName.toString();
+        return returnString.substring(0, returnString.length() - 1);
     }
 
     public DefaultMutableTreeNode getTreeNode() {

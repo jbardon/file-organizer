@@ -30,6 +30,8 @@ public class MainWindow extends JFrame implements Observer {
     private JSpinner spinnerMaxFiles;
     private JSpinner spinnerTolerence;
 
+    private PreviewDialog previewDialog;
+
     public MainWindow(Controller controller){
 
         super("File organizer");
@@ -50,7 +52,7 @@ public class MainWindow extends JFrame implements Observer {
         JPanel panelInputFolder = new JPanel();
         panelInputFolder.setLayout(new BorderLayout());
 
-        this.textInputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*/"../sample/organized");
+        this.textInputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*//*"../sample/organized"*/"/Volumes/Data/Photos");
         this.textInputFolder.setEditable(false);
 
         JButton buttonBrowseInFolder = new JButton(MainWindow.BROWSE_BUTTON_TEXT);
@@ -65,7 +67,7 @@ public class MainWindow extends JFrame implements Observer {
         JPanel panelOutputFolder = new JPanel();
         panelOutputFolder.setLayout(new BorderLayout());
 
-        this.textOutputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*/"../sample/result");
+        this.textOutputFolder = new JTextField(/*MainWindow.NO_DIRECTORY_SELECTED*//*"../sample/result"*/"/Volumes/Data/temp");
         this.textOutputFolder.setEditable(false);
 
         JButton buttonBrowseOutFolder = new JButton(MainWindow.BROWSE_BUTTON_TEXT);
@@ -147,11 +149,28 @@ public class MainWindow extends JFrame implements Observer {
         return (int)this.spinnerTolerence.getValue();
     }
 
+    public PreviewDialog getPreviewDialog(){
+        return this.previewDialog;
+    }
+
     @Override
     public void update(Observable o, Object arg) {
-        Model model = (Model) o;
+        ObserverNotification notif = (ObserverNotification) arg;
 
-        PreviewDialog dialog = new PreviewDialog(this, controller, model.getDisplayTree());
-        dialog.display();
+        switch(notif){
+            case DISPLAY_TREE:
+                final Model model = (Model) o;
+                final MainWindow instance = this;
+
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        previewDialog = new PreviewDialog(instance, controller, model.getDisplayTree());
+                        previewDialog.display();
+                    }
+                });
+
+                break;
+        }
     }
 }

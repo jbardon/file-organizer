@@ -22,8 +22,7 @@ import java.util.Set;
 
 public class App 
 {
-public static void main(String[] args) throws FileNotFoundException,
-      IOException, org.xml.sax.SAXException, InvalidTypeException {
+public static void main(String[] args) {
 
     Controller controller = new Controller();
     MainWindow window = new MainWindow(controller);

@@ -4,6 +4,7 @@ import com.sun.jdi.InvalidTypeException;
 import fr.jbardon.perso.fileorganizer.model.folderaction.FolderAction;
 import fr.jbardon.perso.fileorganizer.model.folderaction.FolderActionHardDrive;
 import fr.jbardon.perso.fileorganizer.model.folderaction.FolderActionTree;
+import fr.jbardon.perso.fileorganizer.views.ObserverNotification;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.*;
@@ -26,6 +27,10 @@ public class Model extends Observable {
     private int maxFiles;
     private int tolerance;
 
+    // Copy progress
+    private int nbFiles;
+    private int currentFile;
+
     public Model(String inputDir, String outputDir, int maxFiles, int tolerance){
 
         this.displayTree = new DefaultMutableTreeNode("No nodes");
@@ -36,6 +41,9 @@ public class Model extends Observable {
 
         this.maxFiles = maxFiles;
         this.tolerance = tolerance;
+
+        this.nbFiles = 0;
+        this.currentFile = 0;
     }
 
     public void computeFolderOrganization() throws InvalidTypeException {
@@ -60,7 +68,7 @@ public class Model extends Observable {
         this.displayTree = actionOnFolder.getTreeNode();
 
         super.setChanged();
-        super.notifyObservers(this);
+        super.notifyObservers(ObserverNotification.DISPLAY_TREE);
     }
 
     public void applyFolderOrganization(){
@@ -68,14 +76,30 @@ public class Model extends Observable {
             this.outputDirectory
         );
 
+        this.nbFiles = this.calculatedFolders.size();
+
         for(Map.Entry<String, LinkedHashSet<File>> entry : this.calculatedFolders.entrySet()){
             actionOnFolder.onFolderCreation(entry.getKey(), entry.getValue());
+
+            this.currentFile++;
+
+            super.setChanged();
+            super.notifyObservers(ObserverNotification.COPY_PROGRESS);
         }
+
+        this.nbFiles = 0;
+        this.currentFile = 0;
 
         System.out.println("End of copy");
     }
 
     public DefaultMutableTreeNode getDisplayTree(){
         return this.displayTree;
+    }
+
+    public int[] getCopyProgress(){
+        return new int[]{
+            this.currentFile, this.nbFiles
+        };
     }
 }

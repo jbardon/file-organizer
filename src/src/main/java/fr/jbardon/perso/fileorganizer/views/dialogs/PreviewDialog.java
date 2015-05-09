@@ -2,21 +2,27 @@ package fr.jbardon.perso.fileorganizer.views.dialogs;
 
 import fr.jbardon.perso.fileorganizer.controller.Controller;
 import fr.jbardon.perso.fileorganizer.model.Model;
+import fr.jbardon.perso.fileorganizer.views.ObserverNotification;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Observable;
 import java.util.Observer;
 
 /**
  * Created by jeremy on 29/04/15.
  */
-public class PreviewDialog extends JDialog {
+public class PreviewDialog extends JDialog implements PropertyChangeListener {
 
     public final static String BUTTON_APPLY_TEXT = "Apply";
+    private JProgressBar progressCopy;
+    private JButton buttonApply;
+
 
     public PreviewDialog(JFrame parent, Controller controller, DefaultMutableTreeNode folders) {
         super(parent, "File organization preview", true);
@@ -29,17 +35,17 @@ public class PreviewDialog extends JDialog {
 
         // Tree
         JTree treeFolders = new JTree(folders);
-        //treeFolders.setMinimumSize(new Dimension(200, 100));
+        treeFolders.setMaximumSize(new Dimension(200, 100));
         JScrollPane scrollTree = new JScrollPane(treeFolders);
 
         panelRoot.add(scrollTree, BorderLayout.NORTH);
 
         // Progress bar
-        JProgressBar progressCopy = new JProgressBar();
+        progressCopy = new JProgressBar();
         panelRoot.add(progressCopy, BorderLayout.CENTER);
 
         // Bottom button
-        JButton buttonApply = new JButton(PreviewDialog.BUTTON_APPLY_TEXT);
+        buttonApply = new JButton(PreviewDialog.BUTTON_APPLY_TEXT);
         buttonApply.addActionListener(controller);
         panelRoot.add(buttonApply, BorderLayout.SOUTH);
 
@@ -50,5 +56,17 @@ public class PreviewDialog extends JDialog {
     public void display(){
         this.pack();
         this.setVisible(true);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if("progress".equals(evt.getPropertyName())) {
+            int progress = (Integer) evt.getNewValue();
+            this.progressCopy.setValue(progress);
+        }
+
+        //this.getContentPane().setCursor(Cursor.getPredefinedCursor(
+        //        (copyProgress[0] == copyProgress[1]) ? Cursor.DEFAULT_CURSOR : Cursor.WAIT_CURSOR
+        //));
     }
 }
